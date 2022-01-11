@@ -12,7 +12,27 @@ export default class Auth {
         })
     }
     login = () => {
-        this.auth0.authorize(); //redirects
+        this.auth0.authorize(); //redirects browser to Auth 0 login page
 };
-
+    handleAuthentication = () => {
+        //get and parse data from url into indivudual pieces and write them to the session.
+        this.auth0.parseHash((err, authResult) => {
+            if (authResult && authResult.accessToken && authResult.idToken) {
+                this.setSession(authResult);
+                this.history.push("/"); //redirect to homepage
+            } else if (err) {
+                this.history.push("/");
+                alert(`Error: $(err.error}. Check console for details.`);
+                console.log("ERROR HERE", err);
+            }
+        })
+    };
+    setSession = authResult => {
+        // set expiration of token
+        const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime()
+        );
+        localStorage.setItem("access_token", authResult.accessToken)
+        localStorage.setItem("id_token", authResult.idToken)
+        localStorage.setItem("expires at", expiresAt)
+    }
 }
