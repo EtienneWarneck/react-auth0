@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
+
 
 class Home extends Component {
     render() {
+        const { isAuthenticated, login } = this.props.authLogin;
         return (
             <div>
                 <h1>Home</h1>
-                <button onClick={this.props.authLogin.login}>Log In</button>
+                {isAuthenticated() ? (
+                    <Link to="/profile">View Profile</Link>
+                ) : (
+                    <button onClick={login}>Log In</button>
+                )}
             </div>
         );
     }

@@ -29,10 +29,16 @@ export default class Auth {
     };
     setSession = authResult => {
         // set expiration of token
-        const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime()
-        );
-        localStorage.setItem("access_token", authResult.accessToken)
-        localStorage.setItem("id_token", authResult.idToken)
-        localStorage.setItem("expires at", expiresAt)
+        console.log(authResult);
+        const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime());
+        localStorage.setItem("access_token", authResult.accessToken);
+        localStorage.setItem("id_token", authResult.idToken);
+        localStorage.setItem("expires_at", expiresAt)
+    };
+
+    isAuthenticated() {
+          console.log("HERE");
+        const expiresAt = JSON.parse(localStorage.getItem("expires_at"));
+        return new Date().getTime() < expiresAt;
     }
 }

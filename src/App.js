@@ -10,8 +10,8 @@ import Callback from './Callback';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.auth = new Auth(this.props.history)
     // passing history object from react-router
+    this.auth = new Auth(this.props.history)
   }
   render() {
     return (
