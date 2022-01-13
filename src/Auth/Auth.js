@@ -3,6 +3,7 @@ import auth0 from "auth0-js";
 export default class Auth {
     constructor(history) {
         this.history = history;
+        this.userProfile = null;
         this.auth0 = new auth0.WebAuth({
             domain: process.env.REACT_APP_AUTH0_DOMAIN,
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
@@ -47,9 +48,28 @@ export default class Auth {
         localStorage.removeItem("expires_at")
         //soft logout
         //this.history.push("/")
+        this.userProfile = null;
         this.auth0.logout({
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
             returnTo:"http://localhost:3000"
         })
     }
+    getAccessToken = () => {
+        const accessToken = localStorage.getItem("access_token");
+        if (!accessToken) {
+            throw new Error("No access token found.");
+        }
+        return accessToken;
+    }
+
+    //this function will expect a callback
+    getProfile = callback => {
+        if (this.userProfile) return callback(this.userProfile);
+        //if no userProfile call endpoint Auth0 and pass it the access token
+        this.auth0.client.userInfo(this.getAccessToken(), (err, profile) => {
+            if (profile) this.userProfile = profile;
+            callback(profile, err)
+        })
+    }
+
 }
