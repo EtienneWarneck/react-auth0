@@ -16,7 +16,7 @@ class App extends Component {
   render() {
     return (
       <>
-        <Nav />
+        <Nav authLogin={this.auth}/>
         <div className='body'>
           <Route
             path="/"
