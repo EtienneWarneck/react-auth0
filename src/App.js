@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Redirect, Route } from "react-router-dom"
+import { Link, Route } from "react-router-dom"
 import Home from "./Home"
 import Profile from "./Profile";
 import Nav from './Nav'
 import './index.css'
 import Auth from './Auth/Auth';
 import Callback from './Callback';
+import Public from './Public';
 
 class App extends Component {
   constructor(props) {
@@ -16,8 +17,9 @@ class App extends Component {
   render() {
     return (
       <>
-        <Nav authLogin={this.auth}/>
+        <Nav authLogin={this.auth} />
         <div className='body'>
+
           <Route
             path="/"
             exact
@@ -27,7 +29,11 @@ class App extends Component {
             render={props => <Callback authCall={this.auth} {...props} />} />
           <Route path="/profile" render={props =>
             this.auth.isAuthenticated ? <Profile authProfile={this.auth} {...props} /> :
-              <Redirect to="/"/>} />
+              <Link to="/" />} />
+          <Route
+            path="/public"
+            component={Public} />
+
         </div>
       </>
     )
