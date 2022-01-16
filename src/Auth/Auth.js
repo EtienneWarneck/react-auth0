@@ -8,13 +8,14 @@ export default class Auth {
             domain: process.env.REACT_APP_AUTH0_DOMAIN,
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
             redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
             responseType: "token id_token",
             scope: "openid profile email"
         })
     }
     login = () => {
         this.auth0.authorize(); //redirects browser to Auth 0 login page
-};
+    };
     handleAuthentication = () => {
         //get and parse data from url into indivudual pieces and write them to the session.
         this.auth0.parseHash((err, authResult) => {
@@ -51,7 +52,7 @@ export default class Auth {
         this.userProfile = null;
         this.auth0.logout({
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
-            returnTo:"http://localhost:3000"
+            returnTo: "http://localhost:3000"
         })
     }
     getAccessToken = () => {
