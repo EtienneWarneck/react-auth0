@@ -8,6 +8,7 @@ import Auth from './Auth/Auth';
 import Callback from './Callback';
 import Public from './Public';
 import Private from './Private';
+import Courses from './Courses';
 
 class App extends Component {
   constructor(props) {
@@ -18,18 +19,18 @@ class App extends Component {
   render() {
     return (
       <>
-        <Nav authLogin={this.auth} />
+        <Nav auth={this.auth} />
         <div className='body'>
 
           <Route
             path="/"
             exact
-            render={props => <Home authLogin={this.auth} {...props} />} />
+            render={props => <Home auth={this.auth} {...props} />} />
           <Route
             path="/callback"
-            render={props => <Callback authCall={this.auth} {...props} />} />
+            render={props => <Callback auth={this.auth} {...props} />} />
           <Route path="/profile" render={props =>
-            this.auth.isAuthenticated ? <Profile authProfile={this.auth} {...props} /> :
+            this.auth.isAuthenticated ? <Profile auth={this.auth} {...props} /> :
               <Link to="/" />} />
           <Route
             path="/public"
@@ -37,7 +38,12 @@ class App extends Component {
           <Route
             path="/private"
             render={props => this.auth.isAuthenticated ? <Private auth={this.auth} {...props} /> :
-              this.authLogin} />
+              this.auth} />
+          <Route
+            path="/course"
+            render={props => this.auth.isAuthenticated && this.auth.userHasScopes(["read: courses"]) ? (<Courses auth={this.auth} {...props} />) : (
+              this.auth.login()
+            )} />
         </div>
       </>
     )

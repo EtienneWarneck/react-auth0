@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 class Home extends Component {
     render() {
-        const { isAuthenticated, login } = this.props.authLogin;
+        const { isAuthenticated, login } = this.props.auth;
         return (
             <div>
                 <h1>Home</h1>

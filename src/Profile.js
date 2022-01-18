@@ -11,14 +11,14 @@ class Profile extends Component {
     }
 
     loadUserProfile() {
-        this.props.authProfile.getProfile((profile, error) =>
+        this.props.auth.getProfile((profile, error) =>
             this.setState({ profile, error })
         );
     }
 
 
     render() {
-        const {profile} = this.state;
+        const { profile } = this.state;
         if (!profile) return null;
         return (
             <>
@@ -30,7 +30,7 @@ class Profile extends Component {
                 </div>
             </>
         )
-             }
+    }
 }
 
 export default Profile;

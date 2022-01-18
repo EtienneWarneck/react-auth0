@@ -7,7 +7,7 @@ require("dotenv").config();
 // const morgan = require('morgan');
 const jwt = require("express-jwt")//validate JWT and set req.user
 const jwksRsa = require("jwks-rsa")//retrieve RSA keys from a JSON web key set(JWKS) endpoint
-
+const checkScope = require('express-jwt-authz') //validates jwt scopes
 
 const checkJwt = jwt({
     // Dynamically provide a signing key based on the header
@@ -49,6 +49,15 @@ app.get('/public', (req, res) => {
 app.get('/private', checkJwt, (req, res) => {
     res.json({
         message: "private API"
+    })
+});
+
+app.get('/course', checkJwt, checkScope(["read:courses"]), function (req, res) {
+    res.json({
+        courses: [
+            { id: 1, title: "Building Apps with React and Redux" },
+            { id: 2, title: "Creating Reusable React components" }
+        ]
     })
 });
 

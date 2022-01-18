@@ -1,16 +1,16 @@
 import auth0 from "auth0-js";
-
 export default class Auth {
     constructor(history) {
         this.history = history;
         this.userProfile = null;
+        this.requestedScopes = "openid profile email read:courses"
         this.auth0 = new auth0.WebAuth({
             domain: process.env.REACT_APP_AUTH0_DOMAIN,
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
             redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
             audience: process.env.REACT_APP_AUTH0_AUDIENCE,
             responseType: "token id_token",
-            scope: "openid profile email"
+            scope: this.requestedScopes
         })
     }
     login = () => {
@@ -25,7 +25,7 @@ export default class Auth {
             } else if (err) {
                 this.history.push("/");
                 alert(`Error: $(err.error}. Check console for details.`);
-                console.log("ERROR HERE", err);
+                console.log("ERROR HERE !!", err);
             }
         })
     };
@@ -33,9 +33,13 @@ export default class Auth {
         // set expiration of token
         console.log(authResult);
         const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime());
+        //if there's a scope param in authResult use it, else  use scopes as
+        // requested, If no scopes were requested, set it to nothing.
+        const scopes = authResult.scope || this.requestedScopes || '';
         localStorage.setItem("access_token", authResult.accessToken);
         localStorage.setItem("id_token", authResult.idToken);
         localStorage.setItem("expires_at", expiresAt)
+        localStorage.setItem("scopes", JSON.stringify(scopes))
     };
 
     isAuthenticated() {
@@ -47,6 +51,7 @@ export default class Auth {
         localStorage.removeItem("access_token");
         localStorage.removeItem("id_token");
         localStorage.removeItem("expires_at")
+        localStorage.removeItem("scopes")
         //soft logout
         //this.history.push("/")
         this.userProfile = null;
@@ -73,4 +78,9 @@ export default class Auth {
         })
     }
 
+    userHasScopes(scopes) {
+        const grantedScopes = (
+            JSON.parse(localStorage.getItem("scopes")) || "").split(" ");
+        return scopes.every(scope => grantedScopes.includes(scope))
+    }
 }

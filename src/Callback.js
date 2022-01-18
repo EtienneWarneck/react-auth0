@@ -5,13 +5,13 @@ class Callback extends Component {
     componentDidMount() {
         //Handle authetication if expected values are in URL.
         if (/acces_token|id_token|error/.test(this.props.location.hash)) {
-            this.props.authCall.handleAuthentication();
+            this.props.auth.handleAuthentication();
         } else {
             throw new Error("invalid callback URL")
         }
     };
     render() {
-         return <h1>Loading...</h1>
+        return <h1>Loading...</h1>
     }
 }
 
