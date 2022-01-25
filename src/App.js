@@ -41,7 +41,7 @@ class App extends Component {
               this.auth} />
           <Route
             path="/course"
-            render={props => this.auth.isAuthenticated && this.auth.userHasScopes(["read: courses"]) ? (<Courses auth={this.auth} {...props} />) : (
+            render={props => this.auth.isAuthenticated && this.auth.userHasScopes(["read:courses"]) ? (<Courses auth={this.auth} {...props} />) : (
               this.auth.login()
             )} />
         </div>

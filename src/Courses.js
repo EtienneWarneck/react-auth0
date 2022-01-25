@@ -17,8 +17,8 @@ class Courses extends Component {
     }
     render() {
         return (
-            <p>{this.state.courses.map(courses => {
-                return <li key={courses.id}> {courses.title}</li>
+            <p>{this.state.courses.map(course => {
+                return <li key={course.id}> {course.title}</li>
             })}</p>
         );
     }

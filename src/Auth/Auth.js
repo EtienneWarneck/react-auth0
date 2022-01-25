@@ -3,13 +3,13 @@ export default class Auth {
     constructor(history) {
         this.history = history;
         this.userProfile = null;
-        this.requestedScopes = "openid profile email read:courses"
+        this.requestedScopes = "openid profile email read:courses" //scopes
         this.auth0 = new auth0.WebAuth({
             domain: process.env.REACT_APP_AUTH0_DOMAIN,
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
             redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
             audience: process.env.REACT_APP_AUTH0_AUDIENCE,
-            responseType: "token id_token",
+            responseType: "token id_token", //id_token : give us JWT token to authenticate the user //token : acces token so user can make API calls
             scope: this.requestedScopes
         })
     }
@@ -17,7 +17,7 @@ export default class Auth {
         this.auth0.authorize(); //redirects browser to Auth 0 login page
     };
     handleAuthentication = () => {
-        //get and parse data from url into indivudual pieces and write them to the session.
+        //get and parse data from url into individual pieces and write them to the session.
         this.auth0.parseHash((err, authResult) => {
             if (authResult && authResult.accessToken && authResult.idToken) {
                 this.setSession(authResult);
@@ -31,7 +31,7 @@ export default class Auth {
     };
     setSession = authResult => {
         // set expiration of token
-        console.log(authResult);
+        // console.log(authResult);
         const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime());
         //if there's a scope param in authResult use it, else  use scopes as
         // requested, If no scopes were requested, set it to nothing.
