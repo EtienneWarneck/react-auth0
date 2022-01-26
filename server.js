@@ -52,12 +52,29 @@ app.get('/private', checkJwt, (req, res) => {
     })
 });
 
+function checkRole(role) {
+    return function (req, res, next) {
+        const assignedRoles = req.user["http://localhost:3000/roles"];
+        if (Array.isArray(assignedRoles) && assignedRoles.includes(role)) {
+            return next(); //success
+        } else {
+            return res.status(401).send('Unauthorized 401')
+        }
+    }
+}
+
+
 app.get('/course', checkJwt, checkScope(["read:courses"]), function (req, res) {
     res.json({
         courses: [
             { id: 1, title: "Building Apps with React and Redux" },
             { id: 2, title: "Creating Reusable React components" }
         ]
+    })
+});
+app.get('/admin', checkJwt, checkRole('admin'), function (req, res) {
+    res.json({
+        message: "Hello from admin API"
     })
 });
 
