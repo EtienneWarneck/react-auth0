@@ -8,10 +8,8 @@ class Public extends Component {
         fetch("/public").then(response => {
             if (response.ok) return response.json();
             throw new Error("Network response not ok")
-        }).then(response => this.setState({ message: response.message })
+        }).then(response => this.setState({ message: response.message }))
             .catch(error => this.setState({ message: error.message }))
-
-        )
     }
     render() {
         return (

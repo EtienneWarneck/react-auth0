@@ -1,4 +1,6 @@
 import auth0 from "auth0-js";
+
+const REDIRECT_ON_LOGIN = "redirect_on_login"
 export default class Auth {
     constructor(history) {
         this.history = history;
@@ -14,24 +16,28 @@ export default class Auth {
         })
     }
     login = () => {
+        localStorage.setItem("redirect_on_login", JSON.stringify(this.history.location)) //
         this.auth0.authorize(); //redirects browser to Auth 0 login page
     };
     handleAuthentication = () => {
         //get and parse data from url into individual pieces and write them to the session.
         this.auth0.parseHash((err, authResult) => {
             if (authResult && authResult.accessToken && authResult.idToken) {
+                debugger;
                 this.setSession(authResult);
-                this.history.push("/"); //redirect to homepage
+                const redirectLocation = localStorage.getItem(REDIRECT_ON_LOGIN) === "undefined" ? "/" : JSON.parse(localStorage.getItem(REDIRECT_ON_LOGIN))
+                this.history.push(redirectLocation);
             } else if (err) {
                 this.history.push("/");
                 alert(`Error: $(err.error}. Check console for details.`);
                 console.log("ERROR HERE !!", err);
             }
+            localStorage.removeItem(REDIRECT_ON_LOGIN)
         })
     };
     setSession = authResult => {
         // set expiration of token
-        // console.log(authResult);
+        console.log("HERE", authResult);
         const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime());
         //if there's a scope param in authResult use it, else  use scopes as
         // requested, If no scopes were requested, set it to nothing.
@@ -78,9 +84,12 @@ export default class Auth {
         })
     }
 
-    userHasScopes(scopes) {
+    userHasScopes(x) {
+        console.log(Array.isArray(localStorage.getItem("scopes"))); //false
         const grantedScopes = (
             JSON.parse(localStorage.getItem("scopes")) || "").split(" ");
-        return scopes.every(scope => grantedScopes.includes(scope))
+        return x.every(x => grantedScopes.includes(x))
+        //every() returns true if all elements in an array pass a test.
+        //includes() method returns true if an array contains a specified value.
     }
 }
