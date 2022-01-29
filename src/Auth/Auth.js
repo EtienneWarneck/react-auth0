@@ -43,10 +43,13 @@ export default class Auth {
         })
     };
     setSession = authResult => {
-        // set expiration of token
         console.log("authResult", authResult);
+
+        _accessToken = authResult.accessToken;
+        _idToken = authResult.idToken;
         // const expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime());
         _expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
+
         //if there's a scope param in authResult use it, else  use scopes as
         // requested, If no scopes were requested, set it to nothing.
         // const scopes = authResult.scope || this.requestedScopes || '';
@@ -55,11 +58,9 @@ export default class Auth {
         // localStorage.setItem("scopes", JSON.stringify(scopes))
         // localStorage.setItem("access_token", authResult.accessToken);
         // localStorage.setItem("id_token", authResult.idToken);
-
-        _accessToken = authResult.accessToken;
-        _idToken = authResult.idToken;
         // localStorage.setItem("expires_at", expiresAt)
 
+        this.scheduleTokenRenewal();
     };
 
     isAuthenticated() {
@@ -106,5 +107,23 @@ export default class Auth {
         // return x.every(x => grantedScopes.includes(x))
         const grantedScopes = (_scopes || "").split(" ");
         return x.every(x => grantedScopes.includes(x))
+    }
+
+
+    //we need to call this before the app is dislayed so we know if the user eis logged in:
+    renewToken(cb) {
+        this.auth0.checkSession({}, (err, result) => {
+            if (err) {
+                console.log(`Error: ${err.error} - ${err.error_description}.`);
+            } else {
+                this.setSession(result)
+            }
+            if (cb) cb(err, result)
+        })
+    }
+
+    scheduleTokenRenewal() {
+        const delay = _expiresAt - Date.now();
+        if (delay > 0) setTimeout(() => this.renewToken(), delay)
     }
 }
